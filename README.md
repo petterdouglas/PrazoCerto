@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 📦 PrazoCerto — Controle Inteligente de Validade para o Pequeno Varejo
 
 > **Trabalho Prático Incremental — Empreendedorismo em Sistemas de Informação (2026/2)**  
