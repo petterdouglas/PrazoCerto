@@ -5,6 +5,7 @@ const pool = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
 const configuracaoRoutes = require('./routes/configuracaoRoutes');
+const produtoRoutes = require('./routes/produtoRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,10 +35,13 @@ app.get('/api/status', async (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/configuracoes', configuracaoRoutes);
 
-// Espaço reservado para a Pessoa 2 plugar as rotas de produtos e dashboard:
-// const produtoRoutes = require('./routes/produtoRoutes');
-// app.use('/api/produtos', produtoRoutes);
+// Rotas da Pessoa 2 (Produtos, Motor do "Farol" e Baixas)
+app.use('/api/produtos', produtoRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Servidor PrazoCerto rodando em http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servidor PrazoCerto rodando em http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
