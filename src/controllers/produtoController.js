@@ -533,10 +533,13 @@ exports.atualizarProduto = async (req, res) => {
 
 /**
  * PATCH / PUT / POST /api/produtos/:id/baixa
- * 4. Baixa de Produto (Saída): registra a saída do lote como "VENDIDO_PROMOCAO"
- * ("Vendido/Promoção") ou "DESCARTADO" ("Descartado"), removendo-o da lista ativa de risco.
+ * 4. Baixa de Produto (Saída): recebe a quantidade que saiu do lote e o motivo.
+ * Em uma baixa parcial, mantém o saldo do lote ativo e cria um registro da saída
+ * como "VENDIDO_PROMOCAO" ("Vendido/Promoção") ou "DESCARTADO" ("Descartado").
  */
 exports.darBaixaProduto = async (req, res) => {
+  let conexao;
+
   try {
     const estabelecimentoId = req.estabelecimento.id;
     const produtoId = Number(req.params.id);
@@ -555,51 +558,144 @@ exports.darBaixaProduto = async (req, res) => {
       });
     }
 
-    const [rows] = await pool.query(
-      'SELECT * FROM produtos_lotes WHERE id = ? AND estabelecimento_id = ?',
+    const quantidadeInformada = req.body && req.body.quantidade;
+    const quantidadeBaixa = Number(quantidadeInformada);
+
+    if (
+      quantidadeInformada === undefined ||
+      quantidadeInformada === null ||
+      String(quantidadeInformada).trim() === '' ||
+      !Number.isInteger(quantidadeBaixa) ||
+      quantidadeBaixa <= 0
+    ) {
+      return res.status(400).json({
+        erro: 'Informe uma quantidade de baixa que seja um número inteiro maior que zero.'
+      });
+    }
+
+    conexao = await pool.getConnection();
+    await conexao.beginTransaction();
+
+    // Bloqueia o lote durante a operação para impedir duas baixas simultâneas sobre o mesmo saldo.
+    const [rows] = await conexao.query(
+      'SELECT * FROM produtos_lotes WHERE id = ? AND estabelecimento_id = ? FOR UPDATE',
       [produtoId, estabelecimentoId]
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({
-        erro: 'Lote de produto não encontrado para este estabelecimento.'
-      });
+      const erro = new Error('Lote de produto não encontrado para este estabelecimento.');
+      erro.statusCode = 404;
+      throw erro;
     }
 
-    if (rows[0].status !== 'ATIVO') {
-      return res.status(400).json({
-        erro: `Este lote já recebeu baixa anteriormente com o status "${rows[0].status}".`
-      });
+    const produtoOriginal = rows[0];
+
+    if (produtoOriginal.status !== 'ATIVO') {
+      const erro = new Error(
+        `Este lote já recebeu baixa anteriormente com o status "${produtoOriginal.status}".`
+      );
+      erro.statusCode = 400;
+      throw erro;
     }
 
-    await pool.query(
-      'UPDATE produtos_lotes SET status = ? WHERE id = ? AND estabelecimento_id = ?',
-      [statusBaixa, produtoId, estabelecimentoId]
+    if (quantidadeBaixa > produtoOriginal.quantidade) {
+      const erro = new Error(
+        `A quantidade para baixa (${quantidadeBaixa}) não pode ser maior que o saldo do lote (${produtoOriginal.quantidade}).`
+      );
+      erro.statusCode = 400;
+      throw erro;
+    }
+
+    let produtoBaixadoId = produtoId;
+    let produtoRestanteId = null;
+
+    if (quantidadeBaixa === produtoOriginal.quantidade) {
+      // Quando toda a quantidade sai, o próprio lote passa a representar a baixa.
+      await conexao.query(
+        'UPDATE produtos_lotes SET status = ? WHERE id = ? AND estabelecimento_id = ?',
+        [statusBaixa, produtoId, estabelecimentoId]
+      );
+    } else {
+      // Em baixas parciais, preserva o saldo ativo e registra a quantidade retirada no histórico.
+      const [resultadoBaixa] = await conexao.query(
+        `INSERT INTO produtos_lotes
+          (estabelecimento_id, nome, codigo_barras, lote, quantidade, data_validade, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          estabelecimentoId,
+          produtoOriginal.nome,
+          produtoOriginal.codigo_barras,
+          produtoOriginal.lote,
+          quantidadeBaixa,
+          produtoOriginal.data_validade,
+          statusBaixa
+        ]
+      );
+
+      await conexao.query(
+        'UPDATE produtos_lotes SET quantidade = quantidade - ? WHERE id = ? AND estabelecimento_id = ?',
+        [quantidadeBaixa, produtoId, estabelecimentoId]
+      );
+
+      produtoBaixadoId = resultadoBaixa.insertId;
+      produtoRestanteId = produtoId;
+    }
+
+    const [parametros] = await conexao.query(
+      'SELECT dias_antecedencia_alerta FROM estabelecimentos WHERE id = ?',
+      [estabelecimentoId]
     );
 
-    const parametrosLoja = await obterParametrosEstabelecimento(estabelecimentoId);
-    const [atualizados] = await pool.query(
+    const [produtosBaixados] = await conexao.query(
       'SELECT * FROM produtos_lotes WHERE id = ? AND estabelecimento_id = ?',
-      [produtoId, estabelecimentoId]
+      [produtoBaixadoId, estabelecimentoId]
     );
+
+    let produtoRestante = null;
+    if (produtoRestanteId) {
+      const [produtosRestantes] = await conexao.query(
+        'SELECT * FROM produtos_lotes WHERE id = ? AND estabelecimento_id = ?',
+        [produtoRestanteId, estabelecimentoId]
+      );
+      produtoRestante = produtosRestantes[0];
+    }
+
+    await conexao.commit();
 
     const produtoBaixado = enriquecerProdutoComFarol(
-      atualizados[0],
-      parametrosLoja ? parametrosLoja.dias_antecedencia_alerta : 7
+      produtosBaixados[0],
+      parametros[0] ? parametros[0].dias_antecedencia_alerta : 7
     );
+
+    const saldoRestante = produtoRestante
+      ? enriquecerProdutoComFarol(
+          produtoRestante,
+          parametros[0] ? parametros[0].dias_antecedencia_alerta : 7
+        )
+      : null;
 
     const descricaoBaixa =
       statusBaixa === 'VENDIDO_PROMOCAO' ? 'Vendido/Promoção' : 'Descartado';
 
     return res.status(200).json({
-      mensagem: `Baixa do lote registrada com sucesso como "${descricaoBaixa}"!`,
-      produto: produtoBaixado
+      mensagem: `Baixa de ${quantidadeBaixa} unidade(s) registrada com sucesso como "${descricaoBaixa}"!`,
+      quantidade_baixada: quantidadeBaixa,
+      produto: produtoBaixado,
+      produto_restante: saldoRestante
     });
   } catch (error) {
+    if (conexao) await conexao.rollback();
+
+    if (error.statusCode) {
+      return res.status(error.statusCode).json({ erro: error.message });
+    }
+
     console.error('Erro ao dar baixa no lote:', error);
     return res.status(500).json({
       erro: 'Erro interno no servidor ao registrar a baixa do produto.'
     });
+  } finally {
+    if (conexao) conexao.release();
   }
 };
 

@@ -22,7 +22,7 @@ router.get('/:id', produtoController.obterProdutoPorId);
 // PUT /api/produtos/:id -> Atualiza dados cadastrais de um lote existente
 router.put('/:id', produtoController.atualizarProduto);
 
-// PATCH, PUT e POST /api/produtos/:id/baixa -> Registra saída rápida ("VENDIDO_PROMOCAO" ou "DESCARTADO")
+// PATCH, PUT e POST /api/produtos/:id/baixa -> Registra saída com { status, quantidade }
 router.patch('/:id/baixa', produtoController.darBaixaProduto);
 router.put('/:id/baixa', produtoController.darBaixaProduto);
 router.post('/:id/baixa', produtoController.darBaixaProduto);
