@@ -112,12 +112,21 @@ Siga os passos abaixo para executar o projeto em ambiente de desenvolvimento loc
    cp .env.example .env
    ```
 
-4. **Inicie a aplicação:**
+4. **Crie o banco e carregue os dados de demonstração:**
+   ```bash
+   npm run db:init
+   npm run seed
+   ```
+   A seed cria, caso ainda não exista, o estabelecimento `Mercado Boa Compra` e inclui
+   lotes realistas em diferentes situações de validade. A execução pode ser repetida sem
+   duplicar os lotes. Para acessar a conta criada: `demo@prazocerto.local` / `123456`.
+
+5. **Inicie a aplicação:**
    ```bash
    npm run dev
    ```
 
-5. **Acesse no navegador:**
+6. **Acesse no navegador:**
    Abra `http://localhost:3000` (ou a porta indicada no terminal).
 
 ---
