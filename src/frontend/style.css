@@ -1,0 +1,31 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding-bottom: 80px; /* Espaço para a navbar inferior */
+}
+
+/* Oculta seções inativas */
+.d-none {
+    display: none !important;
+}
+
+/* Estilização da Bottom Navigation */
+#bottom-nav {
+    z-index: 1030;
+    padding-bottom: env(safe-area-inset-bottom); /* Suporte para iPhone */
+}
+
+.btn-nav {
+    border: none;
+    background: transparent;
+    transition: color 0.2s ease;
+}
+
+.btn-nav:focus {
+    box-shadow: none;
+}
+
+/* Cores e botões de atalho da configuração */
+.btn-dias.active {
+    background-color: #0d6efd;
+    color: white;
+}

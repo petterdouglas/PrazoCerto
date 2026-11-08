@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrazoCerto - Lojista</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+    <!-- Tela de Login -->
+    <section id="login-section" class="view-section container py-5">
+        <div class="text-center mb-4">
+            <h1 class="text-success fw-bold">PrazoCerto</h1>
+            <p class="text-muted">Gestão de Validade Inteligente</p>
+        </div>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form id="login-form" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">E-mail</label>
+                        <input type="email" id="login-email" class="form-control form-control-lg" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Senha</label>
+                        <input type="password" id="login-senha" class="form-control form-control-lg" required>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg w-100 mb-3 fw-bold">Entrar</button>
+                    <button type="button" id="btn-go-register" class="btn btn-outline-secondary w-100">Criar nova conta</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tela de Cadastro -->
+    <section id="register-section" class="view-section container py-5 d-none">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Nova Conta</h2>
+            <p class="text-muted">Cadastre seu estabelecimento</p>
+        </div>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form id="register-form" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nome do Estabelecimento</label>
+                        <input type="text" id="reg-nome-estabelecimento" class="form-control form-control-lg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nome do Responsável</label>
+                        <input type="text" id="reg-nome-responsavel" class="form-control form-control-lg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">E-mail</label>
+                        <input type="email" id="reg-email" class="form-control form-control-lg" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Senha (mín. 6 caracteres)</label>
+                        <input type="password" id="reg-senha" class="form-control form-control-lg" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg w-100 mb-3 fw-bold">Cadastrar</button>
+                    <button type="button" id="btn-go-login" class="btn btn-link w-100 text-decoration-none text-muted">Voltar para Login</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tela de Entrada de Produto -->
+    <section id="produto-section" class="view-section container py-4 d-none">
+        <h3 class="fw-bold mb-4">Novo Lote</h3>
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-body p-4">
+                <form id="produto-form" novalidate>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nome do Produto</label>
+                        <input type="text" id="prod-nome" class="form-control form-control-lg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Código de Barras (Opcional)</label>
+                        <input type="text" id="prod-codigo" class="form-control form-control-lg">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Número do Lote</label>
+                        <input type="text" id="prod-lote" class="form-control form-control-lg" required>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Quantidade</label>
+                            <input type="number" id="prod-quantidade" class="form-control form-control-lg" min="1" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Validade</label>
+                            <input type="date" id="prod-validade" class="form-control form-control-lg" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">Salvar Lote</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tela de Configuração -->
+    <section id="config-section" class="view-section container py-4 d-none">
+        <h3 class="fw-bold mb-4">Configurações</h3>
+        <div class="card shadow-sm border-0 mb-5">
+            <div class="card-body p-4">
+                <form id="config-form">
+                    <label class="form-label fw-bold mb-3">Dias de antecedência para alerta (Farol Amarelo)</label>
+                    <div class="d-flex justify-content-between mb-4">
+                        <button type="button" class="btn btn-outline-primary flex-fill me-2 btn-dias" data-dias="7">7 Dias</button>
+                        <button type="button" class="btn btn-outline-primary flex-fill me-2 btn-dias" data-dias="10">10 Dias</button>
+                        <button type="button" class="btn btn-outline-primary flex-fill btn-dias" data-dias="15">15 Dias</button>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted">Ou digite outro valor:</label>
+                        <input type="number" id="config-dias" class="form-control form-control-lg" min="1" value="7">
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">Salvar Preferência</button>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <button id="btn-logout" class="btn btn-danger w-100 fw-bold">Sair do Sistema</button>
+        </div>
+    </section>
+
+    <!-- Menu de Navegação Inferior (Mobile) -->
+    <nav id="bottom-nav" class="fixed-bottom bg-white border-top shadow-lg d-none">
+        <div class="d-flex justify-content-around py-2">
+            <button class="btn btn-nav text-primary flex-fill" data-target="produto-section">
+                <i class="bi bi-box-seam fs-4 d-block"></i>
+                <small>Entrada</small>
+            </button>
+            <button class="btn btn-nav text-muted flex-fill" data-target="config-section">
+                <i class="bi bi-gear fs-4 d-block"></i>
+                <small>Config.</small>
+            </button>
+        </div>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+</html>
