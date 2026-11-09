@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const pool = require('./config/db');
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // Rota de verificação de saúde da API e conexão com o MySQL
 app.get('/api/status', async (req, res) => {
