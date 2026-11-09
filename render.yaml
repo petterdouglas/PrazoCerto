@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: prazocerto
+    runtime: node
+    plan: free
+    rootDir: src
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_PORT
+        value: "3306"
+      - key: JWT_SECRET
+        generateValue: true

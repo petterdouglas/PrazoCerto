@@ -1,6 +1,8 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     padding-bottom: 80px; /* Espaço para a navbar inferior */
+    color: #17231d;
+    background: #f5f7f5 !important;
 }
 
 /* Oculta seções inativas */
@@ -28,4 +30,186 @@ body {
 .btn-dias.active {
     background-color: #0d6efd;
     color: white;
+}
+
+.dashboard-header {
+    gap: 1rem;
+}
+
+.btn-refresh {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 50%;
+}
+
+.summary-card {
+    display: flex;
+    min-height: 92px;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 1rem;
+}
+
+.summary-count {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.summary-label {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.summary-red {
+    color: #9e2626;
+    background: #fff0ef;
+    border-color: #f4c9c5;
+}
+
+.summary-yellow {
+    color: #795300;
+    background: #fff7dd;
+    border-color: #efdda3;
+}
+
+.summary-green {
+    color: #17613c;
+    background: #eaf7ef;
+    border-color: #bce2c9;
+}
+
+.product-list {
+    display: grid;
+    gap: 0.9rem;
+    padding-bottom: 1.5rem;
+}
+
+.product-card {
+    overflow: hidden;
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: 0 0.25rem 1rem rgb(28 48 36 / 8%);
+}
+
+.product-card::before {
+    display: block;
+    height: 5px;
+    content: "";
+}
+
+.product-card.farol-vermelho::before {
+    background: #c93636;
+}
+
+.product-card.farol-amarelo::before {
+    background: #e3a817;
+}
+
+.product-card.farol-verde::before {
+    background: #268252;
+}
+
+.product-card-body {
+    padding: 1rem;
+}
+
+.product-name {
+    overflow-wrap: anywhere;
+}
+
+.product-meta {
+    color: #66736b;
+    font-size: 0.875rem;
+}
+
+.expiry-label {
+    display: block;
+    margin: 0.9rem 0;
+    padding: 0.7rem 0.8rem;
+    border-radius: 0.65rem;
+    font-size: 0.9rem;
+    font-weight: 750;
+}
+
+.expiry-label.farol-vermelho {
+    color: #8d1e1e;
+    background: #fff0ef;
+}
+
+.expiry-label.farol-amarelo {
+    color: #735000;
+    background: #fff6d8;
+}
+
+.expiry-label.farol-verde {
+    color: #145b37;
+    background: #eaf7ef;
+}
+
+.product-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+}
+
+.product-actions .btn {
+    min-height: 44px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.empty-state {
+    padding: 2rem 1.25rem;
+    border-radius: 1rem;
+    background: white;
+}
+
+.empty-state > i {
+    font-size: 2.5rem;
+}
+
+.action-toast {
+    position: fixed;
+    z-index: 1100;
+    right: 1rem;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    left: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.75rem;
+    color: white;
+    background: #17613c;
+    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 18%);
+    text-align: center;
+}
+
+@media (min-width: 576px) {
+    .product-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .summary-card {
+        min-height: 108px;
+        padding: 1rem;
+    }
+
+    .summary-count {
+        font-size: 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    #farol-section,
+    #produto-section,
+    #config-section {
+        max-width: 760px;
+    }
+
+    .product-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }

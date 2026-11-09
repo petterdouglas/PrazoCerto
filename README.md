@@ -67,20 +67,28 @@ O MVP foi projetado sob o conceito *mobile-first* para validar se uma interface 
 
 ## 🛠️ Tecnologias Utilizadas
 
-*(Nota: atualize os itens abaixo conforme a stack final escolhida pela equipe)*
-
-* **Front-end:** HTML5, CSS3 / Tailwind CSS, JavaScript / React (Design Responsivo *Mobile-First*)
-* **Back-end:** Node.js / Express (ou tecnologia equivalente utilizada pelo grupo)
-* **Banco de Dados:** PostgreSQL / SQLite / Supabase
-* **Hospedagem / Deploy:** Vercel / Render
+* **Front-end:** HTML5, CSS3, JavaScript e Bootstrap (interface responsiva *mobile-first*)
+* **Back-end:** Node.js e Express
+* **Banco de Dados:** MySQL
+* **Hospedagem / Deploy:** serviço Node.js com acesso a uma instância MySQL
 * **Gestão e Versionamento:** Git, GitHub, GitHub Issues e GitHub Projects
 
 ---
 
 ## 🌐 Link da Aplicação
 
-* 🔗 **Acesso ao MVP Online (Produção):** `[INSERIR LINK DO DEPLOY AQUI]`
+* 🔗 **Acesso ao MVP Online (Produção):** ainda não publicado. O link será informado após configurar a hospedagem e o banco MySQL de produção.
 * 🔗 **Repositório Oficial:** [https://github.com/petterdouglas/PrazoCerto](https://github.com/petterdouglas/PrazoCerto)
+
+### Publicação do MVP
+
+O servidor Express serve a interface e a API no mesmo domínio, portanto o front-end usa caminhos relativos para funcionar tanto localmente quanto hospedado. O arquivo [`render.yaml`](./render.yaml) prepara o serviço web para o Render. Para publicar:
+
+1. No Render, crie um Blueprint apontando para este repositório e aceite o serviço definido em `render.yaml`.
+2. Quando solicitado, informe `DB_HOST`, `DB_USER`, `DB_PASSWORD` e `DB_NAME` como variáveis secretas do serviço. `DB_PORT` usa `3306` por padrão e o Render gera `JWT_SECRET` automaticamente. Não grave esses valores no repositório.
+3. Configure o acesso de rede do MySQL hospedado para aceitar conexões do serviço.
+4. No Shell do serviço, inicialize o esquema com `npm run db:init` e, se desejar dados de demonstração, execute `npm run seed`.
+5. Teste o endereço HTTPS público em um celular e substitua o status acima pelo link definitivo.
 
 ---
 

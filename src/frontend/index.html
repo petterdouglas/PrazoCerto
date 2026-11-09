@@ -34,6 +34,53 @@
         </div>
     </section>
 
+    <!-- Painel de Controle -->
+    <section id="farol-section" class="view-section container py-4 d-none">
+        <header class="dashboard-header d-flex justify-content-between align-items-start mb-4">
+            <div>
+                <p class="text-success fw-bold text-uppercase small mb-1">PrazoCerto</p>
+                <h1 class="h2 fw-bold mb-1">Farol de Validade</h1>
+                <p class="text-muted mb-0">Priorize os lotes que precisam de atenção.</p>
+            </div>
+            <button type="button" id="btn-refresh-dashboard" class="btn btn-outline-success btn-refresh" aria-label="Atualizar painel">
+                <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+            </button>
+        </header>
+
+        <div class="row g-2 mb-4" aria-label="Resumo de lotes ativos por criticidade">
+            <div class="col-4">
+                <article class="summary-card summary-red">
+                    <span class="summary-count" id="count-red">0</span>
+                    <span class="summary-label">Vermelho</span>
+                </article>
+            </div>
+            <div class="col-4">
+                <article class="summary-card summary-yellow">
+                    <span class="summary-count" id="count-yellow">0</span>
+                    <span class="summary-label">Amarelo</span>
+                </article>
+            </div>
+            <div class="col-4">
+                <article class="summary-card summary-green">
+                    <span class="summary-count" id="count-green">0</span>
+                    <span class="summary-label">Verde</span>
+                </article>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 fw-bold mb-0">Lotes por urgência</h2>
+            <span id="count-total" class="text-muted small">0 lotes</span>
+        </div>
+        <div id="dashboard-message" class="alert d-none" role="status" aria-live="polite"></div>
+        <div id="product-list" class="product-list" aria-live="polite"></div>
+        <div id="dashboard-empty" class="empty-state text-center d-none">
+            <i class="bi bi-check2-circle text-success" aria-hidden="true"></i>
+            <h3 class="h5 fw-bold mt-3">Tudo em dia!</h3>
+            <p class="text-muted mb-0">Nenhum lote ativo. Cadastre um lote para acompanhar a validade.</p>
+        </div>
+    </section>
+
     <!-- Tela de Cadastro -->
     <section id="register-section" class="view-section container py-5 d-none">
         <div class="text-center mb-4">
@@ -128,6 +175,10 @@
     <!-- Menu de Navegação Inferior (Mobile) -->
     <nav id="bottom-nav" class="fixed-bottom bg-white border-top shadow-lg d-none">
         <div class="d-flex justify-content-around py-2">
+            <button class="btn btn-nav text-primary flex-fill" data-target="farol-section">
+                <i class="bi bi-speedometer2 fs-4 d-block"></i>
+                <small>Farol</small>
+            </button>
             <button class="btn btn-nav text-primary flex-fill" data-target="produto-section">
                 <i class="bi bi-box-seam fs-4 d-block"></i>
                 <small>Entrada</small>
@@ -138,6 +189,8 @@
             </button>
         </div>
     </nav>
+
+    <div id="action-toast" class="action-toast d-none" role="status" aria-live="polite"></div>
 
     <script src="app.js"></script>
 </body>
